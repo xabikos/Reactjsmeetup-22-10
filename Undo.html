@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>React js meetu up </title>
+  <script src="https://fb.me/react-0.13.3.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/2.3.22/rx.all.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.7.5/immutable.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/4.0.6/rx.all.js"></script>
+</head>
+<body>
+<style>
+    
+    html { width: 100%; height: 100%; }
+    
+    body { 
+      width: 100%; 
+      height: 100%; 
+      display: flex;
+      justify-content: center;
+    }
+
+    .editor {
+      width: 300px;
+      margin-top: 30px;
+      justify-content: center;
+      align-items: center;
+      height: 150px;
+    }
+    
+    .button-holder {
+      margin-top: 10px;
+    }
+  </style>
+  
+  <div id="app"></div>
+
+  <script type="text/javascript">
+    'use strict';
+
+    var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+    var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+    function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+    var TextEditor = (function (_React$Component) {
+      _inherits(TextEditor, _React$Component);
+
+      function TextEditor(props) {
+        _classCallCheck(this, TextEditor);
+
+        _get(Object.getPrototypeOf(TextEditor.prototype), 'constructor', this).call(this, props);
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleUndo = this.handleUndo.bind(this);
+
+        this.state = {
+          historyStuck: Immutable.List(),
+          content: Immutable.Map({ text: "" })
+        };
+      }
+
+      _createClass(TextEditor, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+          var _this = this;
+
+          var domNode = document.getElementById('editor');
+          var editingText = Rx.Observable.fromEvent(domNode, 'keyup').pluck('target', 'value').debounce(1000);
+
+          editingText.subscribe(function (text) {
+            var txt = Immutable.Map({ text: text });
+            _this.setState({
+              historyStuck: _this.state.historyStuck.push(txt)
+            });
+          });
+        }
+      }, {
+        key: 'handleChange',
+        value: function handleChange(e) {
+          this.setState({ content: this.state.content.set('text', e.target.value) });
+        }
+      }, {
+        key: 'handleUndo',
+        value: function handleUndo() {
+          var newStuck = this.state.historyStuck.pop();
+          var newContent = newStuck.size !== 0 ? newStuck.last() : Immutable.Map({ text: "" });
+          this.setState({
+            historyStuck: newStuck,
+            content: newContent
+          });
+        }
+      }, {
+        key: 'render',
+        value: function render() {
+          var undoDisabled = this.state.historyStuck.size === 0;
+          return React.createElement(
+            'div',
+            null,
+            React.createElement('textarea', { id: 'editor', className: 'editor', value: this.state.content.get('text'), onChange: this.handleChange }),
+            React.createElement(
+              'div',
+              { className: 'button-holder' },
+              React.createElement(
+                'button',
+                { onClick: this.handleUndo,
+                  disabled: undoDisabled },
+                'Undo'
+              )
+            )
+          );
+        }
+      }]);
+
+      return TextEditor;
+    })(React.Component);
+
+    function renderComponent() {
+      React.render(React.createElement(TextEditor, null), document.getElementById('app'));
+    }
+
+    renderComponent();
+  </script>
+</body>
+</html>

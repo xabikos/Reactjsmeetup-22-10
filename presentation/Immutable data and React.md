@@ -62,7 +62,7 @@ An introduction to immutable data structures in JavaScript and their usage in Re
 * <a href="https://facebook.github.io/immutable-js/"> Immutable.js </a> by facebook 
 * <a href="http://swannodette.github.io/mori/"> Mori </a>
 * <a href="https://github.com/rtfeldman/seamless-immutable">seamless-immutable </a>
-* Probably many more that I don't know about
+* <a href="https://gist.github.com/jlongster/bce43d9be633da55053f">A full list with additional helpers</a>
 
 !SLIDE
 ## How it looks like - Creation
@@ -106,23 +106,47 @@ let mutatedObjectAgain = mutatedObject.set('creator', 'antoher creator');
 <p>&nbsp;</p>
 
 * Mutating state is evil
-* Undo and redo
 * No defensive copying
 * Thread safety (not in JavaScript's single thread world)
+* Undo and redo
 * And a last one... Performance (mainly in React)
 
 !SLIDE
 ## Mutating state
 
 <p>&nbsp;</p>
-The well known plain JS object
+Are we sure that after method invocation the array will remain the same?
 <% code do %>
-plainJSObject.title = 'another title';
-plainJSObject.creator = 'another creator';
+import { doSomeOperation } from 'myCoolLibrary';
+
+let meetupMembers = ['davy', 'max', 'babis'];
+doSomeOperation(meetupMembers);
 <% end %>
+
+!SLIDE
+## Mutating state - the evil part
+
 <p>&nbsp;</p>
-The equivalent immutable Map
+A dummy but not to far from real code omplementation
 <% code do %>
-let mutatedObject = immutableObject.set('title', 'another title');
-let mutatedObjectAgain = mutatedObject.set('creator', 'antoher creator');
+export const doSomeOperation = (arr) => {
+  while(arr.length > 0) {
+    arr.pop();
+  }
+};
 <% end %>
+
+!SLIDE
+## No defensive copy
+
+<p>&nbsp;</p>
+
+* Kinda related to the previous example. 
+* A very popular approach is to copy some data when calling a method that we are not sure if it will mutate the data
+
+!SLIDE
+## Undo - Redo
+
+<p>&nbsp;</p>
+No more slides show us some code...
+<a href="https://jsbin.com/wawuge/edit?js,output">Undo demo</a>
