@@ -150,3 +150,32 @@ export const doSomeOperation = (arr) => {
 <p>&nbsp;</p>
 No more slides show us some code...
 <a href="https://jsbin.com/wawuge/edit?js,output">Undo demo</a>
+
+!SLIDE
+## Performance
+<p>&nbsp;</p>
+Could the performance be improved with all these new onjects?
+<p>&nbsp;</p>
+* <a href="https://en.wikipedia.org/wiki/Persistent_data_structure">Structural sharing is the key</a>
+<p>&nbsp;</p>
+<a href="https://www.youtube.com/watch?v=I7IdS-PbEgI&list=PLb0IAmt7-GS1cbw4qonlQztYV1TAW0sCr&index=13">React.js Conf 2015 - Immutable Data and React (A must watch video)</a>
+
+!SLIDE
+## Performance
+<p>&nbsp;</p>
+The initial tree
+<p>&nbsp;</p>
+<img src="tree.png" />
+
+!SLIDE
+## Performance
+<p>&nbsp;</p>
+The mutated tree
+<p>&nbsp;</p>
+<img src="trees.png" />
+
+!SLIDE
+## Example in React
+<p>&nbsp;</p>
+Enough with the slides! Show us how can we use it...
+<a href="https://jsbin.com/wawuge/edit?js,output">React demo</a>
