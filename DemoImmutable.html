@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="description" content="An example of rerendering in react">
+  <meta charset="utf-8">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.7.3/immutable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+  <script src="https://fb.me/react-0.13.3.js"></script>
+  <title>JS Bin</title>
+</head>
+<body>
+  
+  
+  <div id="app"></div>
+  <script type="text/javascript">
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var firstThreadMessagesNumber = 10;
+var secondThreadMessagesNumber = 40;
+var threads = [];
+
+var firstThreadMessages = [];
+_.times(firstThreadMessagesNumber, function (m) {
+  firstThreadMessages.push(Immutable.Map({
+    id: m,
+    text: 'Message Text ' + m,
+    meta: Immutable.Map({
+      delivered: m % 2 === 0,
+      seen: m % 4 === 0
+    })
+  }));
+});
+
+threads.push({
+  threadId: 1,
+  title: 'The thread with a few messages',
+  messages: Immutable.List(firstThreadMessages)
+});
+
+var secondThreadMessages = [];
+_.times(secondThreadMessagesNumber, function (m) {
+  secondThreadMessages.push(Immutable.Map({
+    id: m,
+    text: 'Message Text ' + m,
+    meta: Immutable.Map({
+      delivered: m % 2 === 0,
+      seen: m % 4 === 0
+    })
+  }));
+});
+threads.push({
+  threadId: 2,
+  title: 'The thread with many more messages',
+  messages: Immutable.List(secondThreadMessages)
+});
+
+var updateThreadsCB = undefined;
+
+var stateManager = {
+  state: threads,
+  registerCallback: function registerCallback(cb) {
+    updateThreadsCB = cb;
+  },
+  markMessageAsSeen: function markMessageAsSeen(threadId, messageId) {
+    var currentMessage = threads[threadId - 1].messages.get(messageId - 1);
+
+    var currentValue = currentMessage.get('meta').get('seen');
+
+    var updatedMap = currentMessage.setIn(['meta', 'seen'], !currentValue);
+
+    var newMessagesList = threads[threadId - 1].messages.set(messageId - 1, updatedMap);
+
+    threads[threadId - 1].messages = newMessagesList;
+    updateThreadsCB();
+  }
+};
+
+var Message = (function (_React$Component) {
+  _inherits(Message, _React$Component);
+
+  function Message() {
+    _classCallCheck(this, Message);
+
+    _get(Object.getPrototypeOf(Message.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(Message, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      //return true;
+      return this.props.message.hashCode() !== nextProps.message.hashCode();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      console.log('    rendering message');
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'p',
+          null,
+          'Id: ',
+          React.createElement(
+            'span',
+            null,
+            this.props.message.get('id')
+          )
+        ),
+        React.createElement(
+          'p',
+          null,
+          'Text: ',
+          React.createElement(
+            'span',
+            null,
+            this.props.message.get('text')
+          )
+        ),
+        React.createElement(
+          'p',
+          null,
+          'Delivered',
+          React.createElement('input', { type: 'checkbox', disabled: true, checked: this.props.message.get('meta').get('delivered') })
+        ),
+        React.createElement(
+          'p',
+          null,
+          'Seen',
+          React.createElement('input', { type: 'checkbox', onChange: function () {}, checked: this.props.message.get('meta').get('seen') })
+        )
+      );
+    }
+  }]);
+
+  return Message;
+})(React.Component);
+
+var MessageList = (function (_React$Component2) {
+  _inherits(MessageList, _React$Component2);
+
+  function MessageList() {
+    _classCallCheck(this, MessageList);
+
+    _get(Object.getPrototypeOf(MessageList.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(MessageList, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      //return true;
+      return this.props.messages.hashCode() !== nextProps.messages.hashCode();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var messages = this.props.messages.map(function (m) {
+        return React.createElement(Message, { key: m.get('id'), message: m });
+      });
+      return React.createElement(
+        'div',
+        null,
+        messages
+      );
+    }
+  }]);
+
+  return MessageList;
+})(React.Component);
+
+var Thread = (function (_React$Component3) {
+  _inherits(Thread, _React$Component3);
+
+  function Thread() {
+    _classCallCheck(this, Thread);
+
+    _get(Object.getPrototypeOf(Thread.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(Thread, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      // TODO: return whether or not current chat thread is
+      // different to former one.
+      // A deep compoarison of the objects should be done here
+      // foreach inside a foreach
+      return true;
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      console.log('rendering thread');
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'p',
+          null,
+          'Id: ',
+          React.createElement(
+            'strong',
+            null,
+            this.props.threadId
+          )
+        ),
+        React.createElement(
+          'p',
+          null,
+          'Title: ',
+          React.createElement(
+            'strong',
+            null,
+            this.props.title
+          )
+        ),
+        React.createElement(MessageList, { messages: this.props.messages })
+      );
+    }
+  }]);
+
+  return Thread;
+})(React.Component);
+
+var ThreadsList = (function (_React$Component4) {
+  _inherits(ThreadsList, _React$Component4);
+
+  function ThreadsList() {
+    _classCallCheck(this, ThreadsList);
+
+    _get(Object.getPrototypeOf(ThreadsList.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(ThreadsList, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'div',
+          { className: 'leftside' },
+          React.createElement(Thread, threads[0])
+        ),
+        React.createElement(
+          'div',
+          { className: 'rightside' },
+          React.createElement(Thread, threads[1])
+        )
+      );
+    }
+  }]);
+
+  return ThreadsList;
+})(React.Component);
+
+var App = (function (_React$Component5) {
+  _inherits(App, _React$Component5);
+
+  function App(props) {
+    _classCallCheck(this, App);
+
+    _get(Object.getPrototypeOf(App.prototype), 'constructor', this).call(this, props);
+
+    this.state = {
+      threads: this.props.threads
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  _createClass(App, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      stateManager.registerCallback(this.handleChange);
+    }
+  }, {
+    key: 'handleChange',
+    value: function handleChange() {
+      this.setState(stateManager.state);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'button',
+          { onClick: function () {
+              stateManager.markMessageAsSeen(1, 1);
+            } },
+          'Toggle first message seen'
+        ),
+        React.createElement(ThreadsList, { threads: this.state.threads })
+      );
+    }
+  }]);
+
+  return App;
+})(React.Component);
+
+function renderComponent() {
+  React.render(React.createElement(App, { threads: threads }), document.getElementById('app'));
+}
+
+renderComponent();
+  </script>
+</body>
+</html>

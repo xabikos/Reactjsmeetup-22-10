@@ -127,7 +127,7 @@ doSomeOperation(meetupMembers);
 ## Mutating state - the evil part
 
 <p>&nbsp;</p>
-A dummy but not to far from real code omplementation
+A dummy but not too far from real code implementation
 <% code do %>
 export const doSomeOperation = (arr) => {
   while(arr.length > 0) {
@@ -178,4 +178,13 @@ The mutated tree
 ## Example in React
 <p>&nbsp;</p>
 Enough with the slides! Show us how can we use it...
-<a href="https://jsbin.com/wawuge/edit?js,output">React demo</a>
+<a href="https://jsbin.com/sefule/edit?html,js,console,output">React demo</a>
+
+!SLIDE
+## Example in React and Immutable
+<p>&nbsp;</p>
+Enough with the slides! Show us how can we use it...
+<a href="https://jsbin.com/xaperu/edit?js,console,output">React demo with immutable</a>
+
+!SLIDE
+## Thank you for your patience
