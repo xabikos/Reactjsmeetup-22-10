@@ -188,3 +188,6 @@ Enough with the slides! Show us how can we use it...
 
 !SLIDE
 ## Thank you for your patience
+<p>&nbsp;</p>
+Code and presentations available at 
+<a href="https://github.com/xabikos/Reactjsmeetup-22-10">Github</a>
