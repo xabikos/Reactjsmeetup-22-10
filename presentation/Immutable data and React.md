@@ -18,7 +18,7 @@ An introduction to immutable data structures in JavaScript and their usage in Re
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<a href="http://www.meetup.com/ReactJS-Belgium/">Brussels Reactjs meetup </a> 
+<a href="http://www.meetup.com/ReactJS-Belgium/">Reactjs Belgium meetup </a> 
 <p>&nbsp;</p>
 <a href="https://philos.io">Philos.io</a>
 
